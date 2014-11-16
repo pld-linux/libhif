@@ -1,5 +1,5 @@
---- libhif-0.1.0/libhif/hif-context.c.orig	2014-06-04 10:15:54.000000000 +0200
-+++ libhif-0.1.0/libhif/hif-context.c	2014-06-15 07:25:26.340531502 +0200
+--- libhif-0.1.6/libhif/hif-context.c.orig	2014-11-10 17:12:02.000000000 +0100
++++ libhif-0.1.6/libhif/hif-context.c	2014-11-16 15:10:10.086198310 +0100
 @@ -31,7 +31,8 @@
  
  #include "config.h"
@@ -10,7 +10,16 @@
  
  #include <hawkey/query.h>
  #include <hawkey/packagelist.h>
-@@ -801,13 +802,17 @@ hif_context_setup (HifContext *context,
+@@ -1133,7 +1134,7 @@ hif_context_setup (HifContext *context,
+ 				  "alphaev68", "alphaev7", "alphapca56", NULL } },
+ 		{ "arm",	{ "armv5tejl", "armv5tel", "armv6l", "armv7l", NULL } },
+ 		{ "armhfp",	{ "armv7hl", "armv7hnl", NULL } },
+-		{ "i386",	{ "i386", "athlon", "geode", "i386",
++		{ "i386",	{ "i386", "athlon", "geode", "pentium2", "pentium3", "pentium4",
+ 				  "i486", "i586", "i686", NULL } },
+ 		{ "ia64",	{ "ia64", NULL } },
+ 		{ "noarch",	{ "noarch", NULL } },
+@@ -1196,9 +1197,9 @@ hif_context_setup (HifContext *context,
  	}
  
  	/* get info from RPM */
@@ -20,17 +29,8 @@
 -	rpmGetArchInfo (&value, NULL);
 +	value = rpmExpand ("%{_target_cpu}", NULL);
  	priv->arch_info = g_strdup (value);
- 	if (g_strcmp0 (value, "i486") == 0 ||
- 	    g_strcmp0 (value, "i586") == 0 ||
--	    g_strcmp0 (value, "i686") == 0) {
-+	    g_strcmp0 (value, "i686") == 0 ||
-+	    g_strcmp0 (value, "athlon") == 0 ||
-+	    g_strcmp0 (value, "pentium2") == 0 ||
-+	    g_strcmp0 (value, "pentium3") == 0 ||
-+	    g_strcmp0 (value, "pentium4") == 0) {
- 		value = "i386";
- 	} else if (g_strcmp0 (value, "armv7l") == 0 ||
- 		   g_strcmp0 (value, "armv6l") == 0 ||
+ 
+ 	/* find the base architecture */
 --- libhif-0.1.0/libhif/hif-keyring.c.orig	2014-06-04 10:15:54.000000000 +0200
 +++ libhif-0.1.0/libhif/hif-keyring.c	2014-06-15 07:51:30.257165572 +0200
 @@ -35,7 +35,9 @@
