@@ -1,19 +1,19 @@
 Summary:	Simple package library built on top of hawkey and librepo
 Summary(pl.UTF-8):	Prosta biblioteka obsługi pakietów oparta na bibliotekach hawkey i librepo
 Name:		libhif
-Version:	0.1.6
-Release:	2
+Version:	0.1.7
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
-# Source0-md5:	652b4b152bba618ebee6e3dffddfa2a2
+# Source0-md5:	8bdcbfd45c0a0a2b1778d37e3c720e00
 Patch0:		%{name}-rpm5.patch
 URL:		https://github.com/hughsie/libhif
 BuildRequires:	glib2-devel >= 1:2.36.0
 BuildRequires:	gobject-introspection-devel >= 0.9.8
 BuildRequires:	gtk-doc >= 1.9
 BuildRequires:	hawkey-devel >= 0.4.6
-BuildRequires:	librepo-devel >= 0.1.5
+BuildRequires:	librepo-devel >= 1.7.11
 BuildRequires:	libsolv-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-devel >= 5
@@ -21,7 +21,7 @@ BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 Requires:	glib2 >= 1:2.36.0
 Requires:	hawkey >= 0.4.6
-Requires:	librepo >= 0.1.5
+Requires:	librepo >= 1.7.11
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -39,7 +39,7 @@ Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.36.0
 Requires:	hawkey-devel >= 0.4.6
-Requires:	librepo-devel >= 0.1.5
+Requires:	librepo-devel >= 1.7.11
 Requires:	rpm-devel >= 5
 
 %description devel

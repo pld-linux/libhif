@@ -226,8 +226,8 @@
  						 const gchar		*filename,
  						 GError			**error);
  
---- libhif-0.1.1/libhif/hif-transaction.c.orig	2014-06-20 14:04:57.000000000 +0200
-+++ libhif-0.1.1/libhif/hif-transaction.c	2014-06-29 16:50:29.724613004 +0200
+--- libhif-0.1.7/libhif/hif-transaction.c.orig	2014-12-17 16:02:38.000000000 +0100
++++ libhif-0.1.7/libhif/hif-transaction.c	2014-12-23 22:17:39.764032549 +0100
 @@ -30,7 +30,8 @@
  
  #include "config.h"
@@ -264,16 +264,16 @@
  	priv->timer = g_timer_new ();
  	priv->pkgs_to_download = g_ptr_array_new_with_free_func ((GDestroyNotify) hy_package_free);
  }
-@@ -370,7 +368,7 @@ hif_transaction_check_untrusted (HifTran
+@@ -372,7 +370,7 @@ hif_transaction_check_untrusted (HifTran
  		}
  
  		/* check file */
--		if (!hif_keyring_check_untrusted_file (priv->keyring,
-+		if (!hif_keyring_check_untrusted_file (
- 							filename,
- 							error))
- 			return FALSE;
-@@ -437,15 +435,6 @@ hif_transaction_rpmcb_type_to_string (co
+-		if (!hif_keyring_check_untrusted_file (priv->keyring, fn, &error_local)) {
++		if (!hif_keyring_check_untrusted_file (fn, &error_local)) {
+ 
+ 			/* probably an i/o error */
+ 			if (!g_error_matches (error_local,
+@@ -463,15 +461,6 @@ hif_transaction_rpmcb_type_to_string (co
  	case RPMCALLBACK_SCRIPT_ERROR:
  		type = "script-error";
  		break;
@@ -289,7 +289,7 @@
  	}
  	return type;
  }
-@@ -733,7 +722,6 @@ hif_transaction_ts_progress_cb (const vo
+@@ -760,7 +749,6 @@ hif_transaction_ts_progress_cb (const vo
  		/* don't do anything */
  		break;
  
@@ -297,7 +297,7 @@
  	case RPMCALLBACK_UNINST_STOP:
  
  		/* phase complete */
-@@ -747,8 +735,6 @@ hif_transaction_ts_progress_cb (const vo
+@@ -774,8 +762,6 @@ hif_transaction_ts_progress_cb (const vo
  	case RPMCALLBACK_UNPACK_ERROR:
  	case RPMCALLBACK_CPIO_ERROR:
  	case RPMCALLBACK_SCRIPT_ERROR:
@@ -306,7 +306,7 @@
  	case RPMCALLBACK_UNKNOWN:
  	case RPMCALLBACK_REPACKAGE_PROGRESS:
  	case RPMCALLBACK_REPACKAGE_START:
-@@ -1290,15 +1276,7 @@ hif_transaction_commit (HifTransaction *
+@@ -1317,15 +1303,7 @@ hif_transaction_commit (HifTransaction *
  
  	/* setup the transaction */
  	tmp = hif_context_get_install_root (priv->context);
@@ -477,3 +477,21 @@
 +}
 +
 +#endif /* RPMORG_COMPAT_H */
+--- libhif-0.1.7/libhif/hif-source.c.orig	2014-12-18 11:01:15.000000000 +0100
++++ libhif-0.1.7/libhif/hif-source.c	2014-12-24 00:29:49.057033122 +0100
+@@ -1127,14 +1127,11 @@ hif_source_add_public_key (HifSource *so
+ {
+ 	HifSourcePrivate *priv = GET_PRIVATE (source);
+ 	gboolean ret;
+-	rpmKeyring keyring;
+ 	rpmts ts;
+ 
+ 	/* then import to rpmdb */
+ 	ts = rpmtsCreate ();
+-	keyring = rpmtsGetKeyring (ts, 1);
+-	ret = hif_keyring_add_public_key (keyring, priv->pubkey_tmp, error);
+-	rpmKeyringFree (keyring);
++	ret = hif_keyring_add_public_key (ts, priv->pubkey_tmp, error);
+ 	rpmtsFree (ts);
+ 	return ret;
+ }
