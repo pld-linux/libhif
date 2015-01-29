@@ -226,8 +226,8 @@
  						 const gchar		*filename,
  						 GError			**error);
  
---- libhif-0.1.7/libhif/hif-transaction.c.orig	2014-12-17 16:02:38.000000000 +0100
-+++ libhif-0.1.7/libhif/hif-transaction.c	2014-12-23 22:17:39.764032549 +0100
+--- libhif-0.1.8/libhif/hif-transaction.c.orig	2015-01-19 16:15:50.000000000 +0100
++++ libhif-0.1.8/libhif/hif-transaction.c	2015-01-29 17:46:08.063875003 +0100
 @@ -30,7 +30,8 @@
  
  #include "config.h"
@@ -244,11 +244,11 @@
  	HifDb			*db;
 -	rpmKeyring		 keyring;
  	rpmts			 ts;
- 	HifContext		*context;
+ 	HifContext		*context;	/* weak reference */
  	GPtrArray		*sources;
-@@ -96,8 +96,7 @@ hif_transaction_finalize (GObject *objec
+@@ -95,8 +95,7 @@ hif_transaction_finalize (GObject *objec
+ 
  	g_ptr_array_unref (priv->pkgs_to_download);
- 	g_object_unref (priv->context);
  	g_timer_destroy (priv->timer);
 -	rpmKeyringFree (priv->keyring);
 -	rpmtsFree (priv->ts);
@@ -256,7 +256,7 @@
  
  	if (priv->db != NULL)
  		g_object_unref (priv->db);
-@@ -121,7 +120,6 @@ hif_transaction_init (HifTransaction *tr
+@@ -120,7 +119,6 @@ hif_transaction_init (HifTransaction *tr
  {
  	HifTransactionPrivate *priv = GET_PRIVATE (transaction);
  	priv->ts = rpmtsCreate ();
@@ -264,7 +264,7 @@
  	priv->timer = g_timer_new ();
  	priv->pkgs_to_download = g_ptr_array_new_with_free_func ((GDestroyNotify) hy_package_free);
  }
-@@ -372,7 +370,7 @@ hif_transaction_check_untrusted (HifTran
+@@ -381,7 +379,7 @@ hif_transaction_check_untrusted (HifTran
  		}
  
  		/* check file */
@@ -273,7 +273,7 @@
  
  			/* probably an i/o error */
  			if (!g_error_matches (error_local,
-@@ -463,15 +461,6 @@ hif_transaction_rpmcb_type_to_string (co
+@@ -472,15 +470,6 @@ hif_transaction_rpmcb_type_to_string (co
  	case RPMCALLBACK_SCRIPT_ERROR:
  		type = "script-error";
  		break;
@@ -289,7 +289,7 @@
  	}
  	return type;
  }
-@@ -760,7 +749,6 @@ hif_transaction_ts_progress_cb (const vo
+@@ -779,7 +768,6 @@ hif_transaction_ts_progress_cb (const vo
  		/* don't do anything */
  		break;
  
@@ -297,7 +297,7 @@
  	case RPMCALLBACK_UNINST_STOP:
  
  		/* phase complete */
-@@ -774,8 +762,6 @@ hif_transaction_ts_progress_cb (const vo
+@@ -793,8 +781,6 @@ hif_transaction_ts_progress_cb (const vo
  	case RPMCALLBACK_UNPACK_ERROR:
  	case RPMCALLBACK_CPIO_ERROR:
  	case RPMCALLBACK_SCRIPT_ERROR:
@@ -306,7 +306,16 @@
  	case RPMCALLBACK_UNKNOWN:
  	case RPMCALLBACK_REPACKAGE_PROGRESS:
  	case RPMCALLBACK_REPACKAGE_START:
-@@ -1317,15 +1303,7 @@ hif_transaction_commit (HifTransaction *
+@@ -1203,7 +1189,7 @@ hif_transaction_commit (HifTransaction *
+ 		goto out;
+ 
+ 	/* import all GPG keys */
+-	ret = hif_keyring_add_public_keys (priv->keyring, error);
++	ret = hif_keyring_add_public_keys (priv->ts, error);
+ 	if (!ret)
+ 		goto out;
+ 
+@@ -1221,15 +1207,7 @@ hif_transaction_commit (HifTransaction *
  
  	/* setup the transaction */
  	tmp = hif_context_get_install_root (priv->context);
