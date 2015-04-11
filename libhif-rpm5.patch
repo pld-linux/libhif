@@ -1,16 +1,16 @@
---- libhif-0.1.6/libhif/hif-context.c.orig	2014-11-10 17:12:02.000000000 +0100
-+++ libhif-0.1.6/libhif/hif-context.c	2014-11-16 15:10:10.086198310 +0100
-@@ -31,7 +31,8 @@
+--- libhif-0.2.0/libhif/hif-context.c.orig	2015-03-20 21:24:51.000000000 +0100
++++ libhif-0.2.0/libhif/hif-context.c	2015-04-11 17:13:34.053370041 +0200
+@@ -31,8 +31,8 @@
  
  #include "config.h"
  
 -#include <rpm/rpmlib.h>
-+#include <rpm/rpmmacro.h>
+ #include <rpm/rpmmacro.h>
 +#include <rpm/rpmrc.h>
  
  #include <hawkey/query.h>
  #include <hawkey/packagelist.h>
-@@ -1133,7 +1134,7 @@ hif_context_setup (HifContext *context,
+@@ -1240,7 +1240,7 @@ hif_context_setup (HifContext *context,
  				  "alphaev68", "alphaev7", "alphapca56", NULL } },
  		{ "arm",	{ "armv5tejl", "armv5tel", "armv6l", "armv7l", NULL } },
  		{ "armhfp",	{ "armv7hl", "armv7hnl", NULL } },
@@ -19,7 +19,7 @@
  				  "i486", "i586", "i686", NULL } },
  		{ "ia64",	{ "ia64", NULL } },
  		{ "noarch",	{ "noarch", NULL } },
-@@ -1196,9 +1197,9 @@ hif_context_setup (HifContext *context,
+@@ -1317,9 +1317,9 @@ hif_context_setup (HifContext *context,
  	}
  
  	/* get info from RPM */
@@ -486,9 +486,17 @@
 +}
 +
 +#endif /* RPMORG_COMPAT_H */
---- libhif-0.1.7/libhif/hif-source.c.orig	2014-12-18 11:01:15.000000000 +0100
-+++ libhif-0.1.7/libhif/hif-source.c	2014-12-24 00:29:49.057033122 +0100
-@@ -1127,14 +1127,11 @@ hif_source_add_public_key (HifSource *so
+--- libhif-0.2.0/libhif/hif-source.c.orig	2015-04-08 20:57:23.000000000 +0200
++++ libhif-0.2.0/libhif/hif-source.c	2015-04-11 18:00:35.709977897 +0200
+@@ -44,6 +44,7 @@
+ #include <glib/gstdio.h>
+ #include <hawkey/util.h>
+ #include <librepo/librepo.h>
++#include <rpm/rpmio.h>
+ #include <rpm/rpmts.h>
+ 
+ #include "hif-cleanup.h"
+@@ -1171,15 +1172,12 @@ hif_source_add_public_key (HifSource *so
  {
  	HifSourcePrivate *priv = GET_PRIVATE (source);
  	gboolean ret;
@@ -500,7 +508,9 @@
 -	keyring = rpmtsGetKeyring (ts, 1);
 -	ret = hif_keyring_add_public_key (keyring, priv->pubkey_tmp, error);
 -	rpmKeyringFree (keyring);
+-	rpmtsFree (ts);
 +	ret = hif_keyring_add_public_key (ts, priv->pubkey_tmp, error);
- 	rpmtsFree (ts);
++	ts = rpmtsFree (ts);
  	return ret;
  }
+ 
