@@ -1,12 +1,12 @@
 Summary:	Simple package library built on top of hawkey and librepo
 Summary(pl.UTF-8):	Prosta biblioteka obsługi pakietów oparta na bibliotekach hawkey i librepo
 Name:		libhif
-Version:	0.2.2
-Release:	2
+Version:	0.2.3
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
-# Source0-md5:	0e28dd95d7181a740307914e2a1a6202
+# Source0-md5:	3d97ff8d601a5f67184d6aa11a9296d2
 Patch0:		%{name}-rpm5.patch
 URL:		https://github.com/hughsie/libhif
 BuildRequires:	glib2-devel >= 1:2.36.0
