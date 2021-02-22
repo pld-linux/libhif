@@ -1,8 +1,12 @@
+#
+# Conditional build:
+%bcond_with	rpm5	# build with rpm5
+
 Summary:	Simple package library built on top of hawkey and librepo
 Summary(pl.UTF-8):	Prosta biblioteka obsługi pakietów oparta na bibliotekach hawkey i librepo
 Name:		libhif
 Version:	0.2.3
-Release:	2
+Release:	3
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
@@ -16,7 +20,7 @@ BuildRequires:	hawkey-devel >= 0.5.3
 BuildRequires:	librepo-devel >= 1.7.11
 BuildRequires:	libsolv-devel
 BuildRequires:	pkgconfig
-BuildRequires:	rpm-devel >= 5
+BuildRequires:	rpm-devel
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 Requires:	glib2 >= 1:2.36.0
@@ -64,9 +68,7 @@ Statyczna biblioteka libhif.
 Summary:	libhif API documentation
 Summary(pl.UTF-8):	Dokumentacja API biblioteki libhif
 Group:		Documentation
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description apidocs
 API documentation for libhif library.
@@ -76,7 +78,7 @@ Dokumentacja API biblioteki libhif.
 
 %prep
 %setup -q
-%patch0 -p1
+%{?with_rpm5:%patch0 -p1}
 
 %build
 export CFLAGS="%{rpmcflags} -D_GNU_SOURCE"
