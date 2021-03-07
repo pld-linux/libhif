@@ -68,7 +68,7 @@ Statyczna biblioteka libhif.
 Summary:	libhif API documentation
 Summary(pl.UTF-8):	Dokumentacja API biblioteki libhif
 Group:		Documentation
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description apidocs
 API documentation for libhif library.
