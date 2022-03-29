@@ -20,6 +20,7 @@ BuildRequires:	hawkey-devel >= 0.5.3
 BuildRequires:	librepo-devel >= 1.7.11
 BuildRequires:	libsolv-devel
 BuildRequires:	pkgconfig
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-devel
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
