@@ -79,7 +79,7 @@ Dokumentacja API biblioteki libhif.
 
 %prep
 %setup -q
-%{?with_rpm5:%patch0 -p1}
+%{?with_rpm5:%patch -P 0 -p1}
 
 %build
 export CFLAGS="%{rpmcflags} -D_GNU_SOURCE"
